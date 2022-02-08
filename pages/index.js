@@ -18,16 +18,20 @@ const MEETUPS = [
     } ,
 
 ];
-const Index = () => {
-    const [ data , setData ] = useState ( [] );
-    useEffect ( () => {
-
-    } , [] )
+const Index = ( props ) => {
     return (
         <div>
-            <MeetupList meetups={ MEETUPS }/>
+            <MeetupList meetups={ props.meetups }/>
         </div>
     );
 };
+
+export async function getStaticProps () {
+    return {
+        props : {
+            meetups : MEETUPS
+        }
+    }
+}
 
 export default Index;
