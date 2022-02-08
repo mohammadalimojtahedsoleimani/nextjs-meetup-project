@@ -1,4 +1,5 @@
 import MeetupList from "../components/meetups/MeetupList";
+import { useEffect , useState } from "react";
 
 const MEETUPS = [
     {
@@ -18,6 +19,10 @@ const MEETUPS = [
 
 ];
 const Index = () => {
+    const [ data , setData ] = useState ( [] );
+    useEffect ( () => {
+
+    } , [] )
     return (
         <div>
             <MeetupList meetups={ MEETUPS }/>
