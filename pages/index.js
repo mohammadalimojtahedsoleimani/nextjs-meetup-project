@@ -1,5 +1,6 @@
 import MeetupList from "../components/meetups/MeetupList";
-
+import axios from "axios";
+import { useState } from "react";
 
 const MEETUPS = [
     {
@@ -18,20 +19,41 @@ const MEETUPS = [
     } ,
 
 ];
+
 const Index = ( props ) => {
+    const [ data , setData ] = useState ( [] )
+
     return (
         <div>
             <MeetupList meetups={ props.meetups }/>
+
+
         </div>
     );
 };
 
-export async function getStaticProps () {
+// export async function getServerSideProps ( context ) {
+//     const req = context.req;
+//     const res = context.res;
+//     return {
+//         props : {
+//             meetups : MEETUPS ,
+//
+//         }
+//     }
+// }
+
+export async function getStaticProps ( context ) {
+    const { data } = await axios.get ( 'https://fakestoreapi.com/products' )
+
     return {
         props : {
             meetups : MEETUPS
-        }
+        } ,
+        revalidate : 10 ,
+
     }
+
 }
 
 export default Index;
