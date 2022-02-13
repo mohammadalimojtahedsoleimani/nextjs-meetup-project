@@ -1,52 +1,48 @@
 import MeetupDetail from "../../components/meetups/MeetupDetail";
 import imageIcon from "../../assets/nut.jpg"
+import { MongoClient } from "mongodb";
 
 const Index = ( props ) => {
     return (
         <div>
             <MeetupDetail
-                image={ imageIcon }
-                title={ `First meetup` }
-                address={ `some Street 5, some city` }
-                description={ `this is a first meetup` }/>
+                image={ props.meetupData.image }
+                title={ props.meetupData.title }
+                address={ props.meetupData.address }
+                description={ props.meetupData.description }/>
 
         </div>
     );
 };
 
 export async function getStaticPaths ( context ) {
+    const url = 'mongodb+srv://mamali-main:POW81qfobmt2CXF8@cluster0.phffq.mongodb.net/meetups?retryWrites=true&w=majority'
+    const client = await MongoClient.connect ( url )
+    const db = client.db ();
+
+    const meetupsCollection = db.collection ( 'meetups' )
+    const meetups = await meetupsCollection.find ( {} , { _id : 1 } ).toArray ()
+    client.close ();
     return {
 
-        paths : [
-            {
-                params : {
-                    meetupid : 'm1'.toString ()
-                } ,
-            } ,
-            {
-                params : {
-                    meetupid : 'm2'.toString ()
-                } ,
-            } ,
-        ] ,
-        fallback : false ,
+        paths : meetups.map ( item => ( { params : { meetupid : item._id.toString () } } ) )
+        , fallback : false
     }
 }
 
 export async function getStaticProps ( context ) {
     const meetupId = context.params.meetupid
+    const url = 'mongodb+srv://mamali-main:POW81qfobmt2CXF8@cluster0.phffq.mongodb.net/meetups?retryWrites=true&w=majority'
+    const client = await MongoClient.connect ( url )
+    const db = client.db ();
 
-
+    const meetupsCollection = db.collection ( 'meetups' )
+    const selectedMeetup = await meetupsCollection.findOne ( { _id : meetupId } );
+    await client.close ();
 
     return {
         props : {
-            meetupData : {
-                image : { imageIcon } ,
-                id : meetupId.toString () ,
-                title : `First meetup` ,
-                address : `some Street 5, some city` ,
-                description : `this is a first meetup`
-            }
+            meetupData : selectedMeetup
         }
     }
 }

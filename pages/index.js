@@ -1,27 +1,12 @@
 import MeetupList from "../components/meetups/MeetupList";
 import axios from "axios";
 import { useState } from "react";
+import { MongoClient } from "mongodb";
 
-const MEETUPS = [
-    {
-        id : 'm1' ,
-        title : 'A First Meetup' ,
-        image : 'https://www.oyster.com/wp-content/uploads/sites/35/2019/05/17870-france-loir-et-cher-chambord-chateau-03-1.jpg' ,
-        address : 'paris,dad' ,
-        description : 'this is a first meet up!'
-    } ,
-    {
-        id : 'm2' ,
-        title : 'A Second Meetup' ,
-        image : 'https://www.renfe-sncf.com/rw-en/blog/PublishingImages/did-you-know-palaces-france/did-you-know_palaces_france.jpg' ,
-        address : 'paris,sad,153212' ,
-        description : 'this is a Second meet up!'
-    } ,
 
-];
 
 const Index = ( props ) => {
-    const [ data , setData ] = useState ( [] )
+
 
     return (
         <div>
@@ -44,11 +29,23 @@ const Index = ( props ) => {
 // }
 
 export async function getStaticProps ( context ) {
-    const { data } = await axios.get ( 'https://fakestoreapi.com/products' )
+    const url = 'mongodb+srv://mamali-main:POW81qfobmt2CXF8@cluster0.phffq.mongodb.net/meetups?retryWrites=true&w=majority'
+    const client = await MongoClient.connect ( url )
+    const db = client.db ();
 
+    const meetupsCollection = db.collection ( 'meetups' )
+
+    const meetups = await meetupsCollection.find ().toArray ();
+    await client.close ();
     return {
         props : {
-            meetups : MEETUPS
+            meetups : meetups.map ( item => ( {
+                id : item._id.toString () ,
+                title : item.title ,
+                image : item.image ,
+                address : item.address  ,
+                description : item.description
+            } ) )
         } ,
         revalidate : 10 ,
 
