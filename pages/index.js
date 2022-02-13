@@ -2,20 +2,27 @@ import MeetupList from "../components/meetups/MeetupList";
 import axios from "axios";
 import { useState } from "react";
 import { MongoClient } from "mongodb";
-
+import Head from "next/head";
 
 
 const Index = ( props ) => {
 
-
     return (
-        <div>
+        <>
+            <Head>
+                <title>
+                    React Meetups
+                </title>
+                <meta name='description'
+                      content='browse a huge list of highly active react meetups!'/>
+            </Head>
             <MeetupList meetups={ props.meetups }/>
 
 
-        </div>
+        </>
     );
 };
+
 
 // export async function getServerSideProps ( context ) {
 //     const req = context.req;
@@ -43,7 +50,7 @@ export async function getStaticProps ( context ) {
                 id : item._id.toString () ,
                 title : item.title ,
                 image : item.image ,
-                address : item.address  ,
+                address : item.address ,
                 description : item.description
             } ) )
         } ,

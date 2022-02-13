@@ -1,6 +1,6 @@
 import MeetupDetail from "../../components/meetups/MeetupDetail";
 import imageIcon from "../../assets/nut.jpg"
-import { MongoClient } from "mongodb";
+import { MongoClient , ObjectId } from "mongodb";
 
 const Index = ( props ) => {
     return (
@@ -37,12 +37,19 @@ export async function getStaticProps ( context ) {
     const db = client.db ();
 
     const meetupsCollection = db.collection ( 'meetups' )
-    const selectedMeetup = await meetupsCollection.findOne ( { _id : meetupId } );
+    const selectedMeetup = await meetupsCollection.findOne ( { _id : ObjectId ( meetupId ), } );
     await client.close ();
 
     return {
         props : {
-            meetupData : selectedMeetup
+            meetupData : {
+                id : selectedMeetup._id.toString(),
+                title:selectedMeetup.title,
+                address:selectedMeetup.address,
+                image : selectedMeetup.image,
+                description:selectedMeetup.description
+
+            }
         }
     }
 }
